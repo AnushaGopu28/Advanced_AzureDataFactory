@@ -1,0 +1,11 @@
+@concat(
+    'SELECT COUNT(*) AS total_count FROM ',
+    pipeline().parameters.schema, '.', pipeline().parameters.table,
+    ' WHERE last_updated > CAST(',
+    if(
+        empty(pipeline().parameters.backdate),
+        activity('lastcdc').output.value[0].cdc_timestamp,
+        pipeline().parameters.backdate
+    ),
+    ' AS datetime)'
+)
